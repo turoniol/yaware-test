@@ -9,8 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core Quick)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick)
+find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core Quick Sql)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Sql)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -21,12 +21,8 @@ add_executable(yaware-test
   ${PROJECT_SOURCES}
 )
 
-target_include_directories(yaware-test PRIVATE
-    ${Qt${QT_VERSION_MAJOR}Core_INCLUDE_DIRS}
-    ${Qt${QT_VERSION_MAJOR}Quick_INCLUDE_DIRS})
-
 target_link_libraries(yaware-test
-  PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick)
+  PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Sql)
 
 set_target_properties(yaware-test PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
@@ -39,8 +35,3 @@ set_target_properties(yaware-test PROPERTIES
 install(TARGETS yaware-test
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_import_qml_plugins(yaware-test)
-    qt_finalize_executable(yaware-test)
-endif()

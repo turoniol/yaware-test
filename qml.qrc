@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>ImageModel.qml</file>
+        <file>ImageInfoItem.qml</file>
     </qresource>
 </RCC>
