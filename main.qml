@@ -1,7 +1,9 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.15
+
+import Screenshots 1.0
 
 ApplicationWindow {
     width: 1280
@@ -17,14 +19,14 @@ ApplicationWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         cellWidth: cellSize; cellHeight: cellSize
 
-        model: ImageModel { }
+        model: ScreenshotsModel { }
         delegate: ImageInfoItem {
             percent: model.name
             rectWidth: elementSize; rectHeight: elementSize
         }
     }
 
-    footer: ColumnLayout {
+    footer: RowLayout {
         Rectangle {
             color: "yellow"
             anchors.fill: parent
@@ -40,12 +42,13 @@ ApplicationWindow {
                 stepSize: 5
             }
         }
+
         Button {
             property bool isActive: false
 
             text: "Start"
 
-            width: parent.width
+            width: 800
 
             onPressed: {
                 isActive = !isActive

@@ -14,6 +14,13 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Sql)
 
 set(PROJECT_SOURCES
         main.cpp
+
+        screenshot.h
+        IDbBase.h
+        sqlitescreenshotsdb.h sqlitescreenshotsdb.cpp
+        screenshotslist.h screenshotslist.cpp
+        screenshotsmodel.h screenshotsmodel.cpp
+
         qml.qrc
 )
 
