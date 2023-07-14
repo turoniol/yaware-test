@@ -6,6 +6,8 @@ import QtQuick.Layouts 1.15
 import Screenshots 1.0
 
 ApplicationWindow {
+    id: mainWindow
+
     width: 1280
     height: 960
     visible: true
@@ -19,41 +21,27 @@ ApplicationWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         cellWidth: cellSize; cellHeight: cellSize
 
-        model: ScreenshotsModel { }
+        model: ScreenshotsModel {
+            screenshots: screenshotsList
+        }
         delegate: ImageInfoItem {
-            percent: model.name
             rectWidth: elementSize; rectHeight: elementSize
+
+            percent: model.percentage
+            date: model.date
+            time: model.time
+            imageData: model.hashData
         }
     }
 
-    footer: RowLayout {
-        Rectangle {
-            color: "yellow"
-            anchors.fill: parent
-        }
+    footer: Button {
+        property bool isActive: false
 
-        RowLayout {
-            Text {
-                text: "Delay (s)"
-            }
-            SpinBox {
-                from: 0; to: 60
-                value: 60
-                stepSize: 5
-            }
-        }
+        text: "Start"
 
-        Button {
-            property bool isActive: false
-
-            text: "Start"
-
-            width: 800
-
-            onPressed: {
-                isActive = !isActive
-                text = isActive ? "Stop" : "Start"
-            }
+        onPressed: {
+            isActive = !isActive
+            text = isActive ? "Stop" : "Start"
         }
     }
 }

@@ -1,14 +1,14 @@
 #ifndef SQLITESCREENSHOTSDB_H
 #define SQLITESCREENSHOTSDB_H
 
-#include "IDbBase.h"
+#include "screenshotsdbbase.h"
 #include "screenshot.h"
 
 QT_BEGIN_NAMESPACE
 class QSqlRecord;
 QT_END_NAMESPACE
 
-class SQLiteScreenshotsDb final : IDbBase<Screenshot>
+class SQLiteScreenshotsDb final : public ScreenshotsDbBase
 {
 public:
     SQLiteScreenshotsDb(const QString& dbPath);
@@ -21,7 +21,7 @@ protected:
     QString dbType() const;
 
 private:
-    Screenshot parse(const QSqlRecord& record);
+    static Screenshot parse(const QSqlRecord& record);
 };
 
 #endif // SQLITESCREENSHOTSDB_H

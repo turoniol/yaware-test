@@ -3,10 +3,13 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlQueryModel>
+#include <QSqlError>
+#include <QDebug>
 
-SQLiteScreenshotsDb::SQLiteScreenshotsDb(SQLiteScreenshotsDb(const QString& dbPath))
-    : IScreenshotDb(dbPath)
+SQLiteScreenshotsDb::SQLiteScreenshotsDb(const QString& dbPath)
 {
+    open(dbPath);
+
     assert(QSqlQuery("create table if not exists screenshots ("
                      "   id int primary key, "
                      "   image_data blob not null, "
@@ -34,16 +37,14 @@ void SQLiteScreenshotsDb::insertInternal(const Screenshot &item)
     QSqlQuery q;
     q.prepare("insert into screenshots (image_data, image_hash, comparison_percent, date) "
               "values (:image_data, :image_hash, :percentage, :date);");
-    q.bindValue(":image_data", item.rawData);
-    q.bindValue(":image_hash", item.rawData);
+    q.bindValue(":image_data", QString(QByteArray::fromBase64(item.hashData)));
+    q.bindValue(":image_hash", QString(item.hashData));
     q.bindValue(":percentage", item.comparisonPercentage);
-    q.bindValue(":date", item.takenTime.toString(Qt::ISODate));
+    q.bindValue(":date",       item.takenTime.toString(Qt::ISODate));
 
 
-    if (q.exec())
-        qDebug() << "The screenshot successfully inserted.";
-    else
-        qDebug() << "Failed during inserting the screenshot.";
+    if (!q.exec())
+        qDebug() << q.lastError().text();
 }
 
 
@@ -51,9 +52,9 @@ Screenshot SQLiteScreenshotsDb::parse(const QSqlRecord &record)
 {
     Screenshot result{};
 
-    result.rawData = record.value("image_data").toByteArray();
+    result.hashData             = record.value("image_hash").toByteArray();
     result.comparisonPercentage = record.value("comparison_percent").toFloat();
-    result.takenTime = record.value("date").toDateTime();
+    result.takenTime            = record.value("date").toDateTime();
 
     return result;
 }

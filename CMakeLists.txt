@@ -16,7 +16,7 @@ set(PROJECT_SOURCES
         main.cpp
 
         screenshot.h
-        IDbBase.h
+        screenshotsdbbase.h screenshotsdbbase.cpp
         sqlitescreenshotsdb.h sqlitescreenshotsdb.cpp
         screenshotslist.h screenshotslist.cpp
         screenshotsmodel.h screenshotsmodel.cpp

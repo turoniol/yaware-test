@@ -15,6 +15,8 @@ public:
     explicit ScreenshotsList(QObject *parent = nullptr);
 
     const QVector<Screenshot>& items() const;
+    void append(const Screenshot& item);
+    void setAt(int index, Screenshot item);
 
 signals:
     void preItemAppended();

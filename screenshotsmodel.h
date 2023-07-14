@@ -12,10 +12,10 @@ class ScreenshotsModel : public QAbstractListModel
 public:
     enum {
         PercentageRole = Qt::UserRole + 1,
-        PixmapRole,
+        HashDataRole,
         DateRole,
         TimeRole
-    }
+    };
 
     explicit ScreenshotsModel(QObject *parent = nullptr);
 
@@ -32,6 +32,8 @@ public:
 
     ScreenshotsList* screenshots() const;
     void setScreenshots(ScreenshotsList *list);
+
+    QHash<int, QByteArray> roleNames() const;
 
 private:
     ScreenshotsList* m_screenshots = nullptr;

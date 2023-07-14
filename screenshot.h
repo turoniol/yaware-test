@@ -1,9 +1,12 @@
 #ifndef SCREENSHOT_H
 #define SCREENSHOT_H
 
+#include <QDateTime>
+#include <QByteArray>
+
 struct Screenshot {
     float comparisonPercentage;
-    QByteArray rawData;
+    QByteArray hashData;
     QDateTime takenTime;
 };
 
