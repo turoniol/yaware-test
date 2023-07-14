@@ -2,6 +2,7 @@
 #define CONTROLLER_H
 
 #include <QObject>
+#include <QTimer>
 
 #include <memory>
 
@@ -37,11 +38,13 @@ private:
 
     static float calcIdentity(const Screenshot& current, const Screenshot& last);
 
-    static constexpr int ScreenshotDelay = 60;
+    static constexpr int ScreenshotDelay = 5; // seconds
     static const QString DbPath;
 
     std::unique_ptr<ScreenshotsDbBase> m_db;
     ScreenshotsList screenshotsList;
+
+    QTimer m_shotTimer;
 };
 
 #endif // CONTROLLER_H

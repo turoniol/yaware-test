@@ -41,9 +41,15 @@ ApplicationWindow {
 
         onPressed: {
             isActive = !isActive
-            text = isActive ? "Stop" : "Start"
 
-            controller.run()
+            if (isActive) {
+                text = "Stop"
+                controller.run()
+            }
+            else {
+                text = "Run"
+                controller.stop()
+            }
         }
     }
 }

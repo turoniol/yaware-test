@@ -26,6 +26,8 @@ Controller::Controller(QObject *parent)
         emit screenshotsChanged();
     });
 
+    connect(&m_shotTimer, &QTimer::timeout, this, &Controller::makeScreenshot);
+
     std::sort(items.begin(), items.end(),
               [](const auto &left, const auto &right) {
                   return left.takenTime > right.takenTime;
@@ -37,13 +39,12 @@ Controller::Controller(QObject *parent)
 
 void Controller::run()
 {
-//    QTimer::singleShot(ScreenshotDelay * 1000, this, &Controller::makeScreenshot);
-    makeScreenshot();
+    m_shotTimer.start(ScreenshotDelay * 1000);
 }
 
 void Controller::stop()
 {
-    assert(false && "don't forget to implement me");
+    m_shotTimer.stop();
 }
 
 void Controller::makeScreenshot()
