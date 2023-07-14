@@ -43,7 +43,7 @@ private:
 
     static float calcIdentity(const Screenshot& current, const Screenshot& last);
 
-    static constexpr int ScreenshotDelay = 2; // seconds
+    static constexpr int ScreenshotDelay = 60; // seconds
     static const QString DbPath;
 
     std::unique_ptr<ScreenshotsDbBase> m_db;
