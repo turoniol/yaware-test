@@ -20,6 +20,7 @@ set(PROJECT_SOURCES
         sqlitescreenshotsdb.h sqlitescreenshotsdb.cpp
         screenshotslist.h screenshotslist.cpp
         screenshotsmodel.h screenshotsmodel.cpp
+        controller.h controller.cpp
 
         qml.qrc
 )

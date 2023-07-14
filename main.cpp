@@ -6,11 +6,6 @@
 #include "screenshotsmodel.h"
 #include "sqlitescreenshotsdb.h"
 
-#include <QSqlQuery>
-#include <QBuffer>
-#include <QPixmap>
-#include <QScreen>
-
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -27,11 +22,6 @@ int main(int argc, char *argv[])
 
     auto items = db.items();
 
-    qSort(items.begin(), items.end(),
-          [](const auto &left, const auto &right) {
-              return left.takenTime > right.takenTime;
-    });
-
     for (Screenshot item : items)
         screenshotsList.append(item);
 
@@ -44,23 +34,6 @@ int main(int argc, char *argv[])
                 QCoreApplication::exit(-1);
         }, Qt::QueuedConnection);
     engine.load(url);
-
-//    if (QScreen *screen = QGuiApplication::primaryScreen()) {
-//        auto pixmap = screen->grabWindow(0);
-
-//        QByteArray bytes;
-//        QBuffer buffer(&bytes);
-//        buffer.open(QIODevice::WriteOnly);
-//        pixmap.save(&buffer, "PNG");
-
-//        Screenshot screenshot{};
-
-//        screenshot.comparisonPercentage = 0.0;
-//        screenshot.hashData = bytes.toBase64();
-//        screenshot.takenTime = QDateTime::currentDateTime();
-
-//        db.insert(screenshot);
-//    }
 
     return app.exec();
 }
