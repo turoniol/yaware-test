@@ -5,6 +5,7 @@
 #include <QByteArray>
 #include <QDateTime>
 #include <QVector>
+#include <QMutex>
 
 #include "screenshot.h"
 
@@ -27,6 +28,7 @@ signals:
 
 private:
     QVector<Screenshot> m_screenshots;
+    mutable QMutex m_mutex;
 };
 
 #endif // SCREENSHOTSLIST_H
