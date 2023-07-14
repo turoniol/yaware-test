@@ -7,17 +7,23 @@
 
 #include "screenshotsdbbase.h"
 #include "screenshot.h"
+#include "screenshotslist.h"
 
 class Controller : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(ScreenshotsList *screenshots READ screenshots WRITE setScreenshots NOTIFY screenshotsChanged)
 public:
     explicit Controller(QObject *parent = nullptr);
+
+    ScreenshotsList* screenshots();
+    void setScreenshots(ScreenshotsList *newScreenshotsList);
 
 signals:
     void screenShooted();
     void screenshotProcessed(const Screenshot&);
     void screenshotSaved();
+    void screenshotsChanged();
 
 public slots:
     void run();
@@ -35,6 +41,7 @@ private:
     static const QString DbPath;
 
     std::unique_ptr<ScreenshotsDbBase> m_db;
+    ScreenshotsList screenshotsList;
 };
 
 #endif // CONTROLLER_H

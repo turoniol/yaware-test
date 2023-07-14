@@ -14,8 +14,11 @@ class ScreenshotsList : public QObject
 public:
     explicit ScreenshotsList(QObject *parent = nullptr);
 
+    ScreenshotsList& operator=(const ScreenshotsList&);
+
     const QVector<Screenshot>& items() const;
     void append(const Screenshot& item);
+    void appendFront(const Screenshot& item);
     void setAt(int index, Screenshot item);
 
 signals:

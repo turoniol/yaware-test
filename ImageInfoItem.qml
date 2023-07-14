@@ -15,6 +15,10 @@ Column {
         return imageData.length > 0 ? "data:image/png;base64," + imageData : ""
     }
 
+    function calcPercentage() {
+        return percentage < 0 ? "No" : Math.round(percentage * 100) / 100 + "%"
+    }
+
     Rectangle {
         width: rectWidth
         height: rectHeight
@@ -58,7 +62,7 @@ Column {
 
 
             Text {
-                text: "0%"
+                text: calcPercentage()
                 color: "yellow"
                 font.pointSize: 30
 

@@ -9,6 +9,7 @@
 #include <QScreen>
 #include <QGuiApplication>
 #include <QPair>
+#include <QDebug>
 
 #include <algorithm>
 
@@ -17,11 +18,27 @@ const QString Controller::DbPath = "./images.db";
 Controller::Controller(QObject *parent)
     : QObject{parent}
     , m_db{std::make_unique<SQLiteScreenshotsDb>(DbPath)}
-{ }
+{
+    auto items = m_db->items();
+
+    connect(this, &Controller::screenshotProcessed, [this](const Screenshot& s) {
+        screenshotsList.appendFront(s);
+        emit screenshotsChanged();
+    });
+
+    std::sort(items.begin(), items.end(),
+              [](const auto &left, const auto &right) {
+                  return left.takenTime > right.takenTime;
+              });
+
+    for (const auto& item : items)
+        screenshotsList.append(item);
+}
 
 void Controller::run()
 {
-    QTimer::singleShot(ScreenshotDelay * 1000, this, &Controller::makeScreenshot);
+//    QTimer::singleShot(ScreenshotDelay * 1000, this, &Controller::makeScreenshot);
+    makeScreenshot();
 }
 
 void Controller::stop()
@@ -51,6 +68,8 @@ void Controller::makeScreenshot()
     screenshot.hashData = bytes.toBase64();
     screenshot.takenTime = QDateTime::currentDateTime();
 
+    setComparisonPercentage(screenshot);
+
     emit screenshotProcessed(screenshot);
 
     m_db->insert(screenshot);
@@ -60,54 +79,48 @@ void Controller::makeScreenshot()
 
 void Controller::setComparisonPercentage(Screenshot& s)
 {
-    auto items = m_db->items();
-
-    std::sort(items.begin(), items.end(),
-              [](const auto &left, const auto &right) {
-                  return left.takenTime > right.takenTime;
-              });
-
-    s.comparisonPercentage = items.empty() ? -1 : calcIdentity(s, items.front());
+    auto& items = screenshotsList.items();
+    s.comparisonPercentage = items.empty() ? -1 : 100.f * calcIdentity(s, items.front());
 }
 
-static float countDiffs(const QVector<QPair<char, char>>& pairs) {
+static int countSetBits(char c) {
     int count = 0;
 
-    for (const auto& pair : pairs) {
-        QByteArray larr = QByteArray::fromBase64(QByteArray(1, pair.first));
-        QByteArray rarr = QByteArray::fromBase64(QByteArray(1, pair.second));
-
-        assert(larr.size() == rarr.size());
-
-        for (int i = 0; i < larr.size(); ++i)
-            if (larr.at(i) != rarr.size())
-                ++count;
-    }
+    for (; c; c >>= 1)
+        count += c & 1;
 
     return count;
 }
 
 float Controller::calcIdentity(const Screenshot &current, const Screenshot &last)
 {
-    auto& currentHash = current.hashData;
-    auto lastHash = last.hashData;
-
-
-    if (lastHash.length() != currentHash.length())
-        return 0.0f;
-
     using CharPair = QPair<char, char>;
-    QVector<CharPair> diff;
+    constexpr int EncodingBase = 64;
 
-    const int len = currentHash.length();
+    auto currentRaw = current.hashData;
+    auto lastRaw = last.hashData;
+
+    const int len = std::min(lastRaw.size(), currentRaw.size());
+    const int lenDiff = std::abs(lastRaw.size() - currentRaw.size());
+
+    int diff = EncodingBase * lenDiff;
 
     for (int i = 0; i < len; ++i) {
-        char cchar = currentHash.at(i);
-        char lchar = lastHash.at(i);
+        char difference = currentRaw.at(i) ^ lastRaw.at(i);
 
-        if (cchar != lchar)
-            diff << CharPair(cchar, lchar);
+        if (difference)
+            diff += countSetBits(difference);
     }
 
-    return diff.empty() ? 1.0f : 1 - countDiffs(diff) / len;
+    return 1.0f - float(diff) / EncodingBase / (len + lenDiff);
+}
+
+ScreenshotsList* Controller::screenshots()
+{
+    return &screenshotsList;
+}
+
+void Controller::setScreenshots(ScreenshotsList *newScreenshotsList)
+{
+    screenshotsList = *newScreenshotsList;
 }

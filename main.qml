@@ -22,7 +22,7 @@ ApplicationWindow {
         cellWidth: cellSize; cellHeight: cellSize
 
         model: ScreenshotsModel {
-            screenshots: screenshotsList
+            screenshots: controller.screenshots
         }
         delegate: ImageInfoItem {
             rectWidth: elementSize; rectHeight: elementSize
@@ -42,6 +42,8 @@ ApplicationWindow {
         onPressed: {
             isActive = !isActive
             text = isActive ? "Stop" : "Start"
+
+            controller.run()
         }
     }
 }
